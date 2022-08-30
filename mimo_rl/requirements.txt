@@ -1,0 +1,5 @@
+bidict==0.21.2
+gym==0.18.0
+pygame==2.0.1
+stable-baselines==2.10.2
+tensorflow==1.14.0
