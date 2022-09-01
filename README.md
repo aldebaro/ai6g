@@ -5,7 +5,7 @@ Artificial intelligence / machine learning in 5G / 6G mobile networks
 
 Please note the convention regarding naming: keep the name. Each notebook has its "solution". For instance, 01_detection_qam_over_awgn.ipynb has the associated solutions_01_detection_qam_over_awgn.ipynb
 
-01_detection_qam_over_awgn.ipynb – Classification with AWGN and artificial channels using several classifiers of scikit-learn, do not use Keras. We have the theoretical best result - Concept: increase number of sampling examples. The solution shows the sample complexity for several classifiers. Lesson: nothing better than more data - Douglas
+01_detection_qam_over_awgn.ipynb – Classification with AWGN and artificial channels using several classifiers of scikit-learn, do not use Keras. We have the theoretical best result - Concepts: 1) increase number of sampling examples, 2) multicondition training, with several SNRs to show generalization capability. The solution shows the sample complexity for several classifiers. Lesson: nothing better than more data - Douglas
 
 02_mimo_over_flat_fading_decoding.ipynb - 
 
