@@ -13,7 +13,7 @@ N2 – Beam selection in MIMO using LIDAR - João e Luan
 
 N3 – Channel estimation (regression) – Yuichi
 
-N4 - Hybrid architecture? Channel estimation - Muller
+N4 - Hybrid architecture? Channel estimation - Muller, Claudio e Daniel
 
 N5 – An example of Federated Learning - From ITU Challenge - Ailton
 
