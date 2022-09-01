@@ -1,12 +1,13 @@
 # ai6g
 Artificial intelligence / machine learning in 5G / 6G mobile networks
 
-## Jupyter Notebooks
+## Jupyter Notebooks and corresponding responsible person
 
-N0 – Classification with AWGN and artificial channels - Douglas
-/ mismatch – several channels, importance of channels, overfitting, matched conditions, site-dependent and indep channels, overfitting, generalization capability, multicondition
+Please note the convention regarding naming: keep the name. Each notebook has its "solution". For instance, 01_detection_qam_over_awgn.ipynb has the associated solutions_01_detection_qam_over_awgn.ipynb
 
-N1 – An example of Anomaly detection – From ITU Challenge? - José, João e Luan
+01_detection_qam_over_awgn.ipynb – Classification with AWGN and artificial channels using several classifiers of scikit-learn, do not use Keras. We have the theoretical best result - Concept: increase number of sampling examples. The solution shows the sample complexity for several classifiers. Lesson: nothing better than more data - Douglas
+
+02_mimo_over_flat_fading_decoding.ipynb - 
 
 N2 – Beam selection in MIMO using LIDAR - João e Luan
 
@@ -28,3 +29,4 @@ N10 – GAN: https://github.com/YudiDong/Channel_Estimation_cGAN - Yuichi (note:
 
 N11 – Synthetic channel data. Sequences, LSTM + GRU + Transformer - codigo do Globecom - Rodrigo
 
+N12 – An example of Anomaly detection – From ITU Challenge? - José, João e Luan
