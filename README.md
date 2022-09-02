@@ -3,7 +3,11 @@ Artificial intelligence / machine learning in 5G / 6G mobile networks
 
 ## Conventions
 
-Please note the convention regarding naming: keep the name. Each notebook has its "solution". For instance, 01_detection_qam_over_awgn.ipynb has the associated solutions_01_detection_qam_over_awgn.ipynb
+Please note the convention regarding naming and... follow it
+
+Notebook name: The names are indicated below. Note that each notebook is associated to a second one its "solution". For instance, 01_detection_qam_over_awgn.ipynb has the associated solutions_01_detection_qam_over_awgn.ipynb
+
+Folder name: All the files needed by notebook x are in a folder with a name that starts with files_x. For instance, the Python and dataset files associated to notebook 01_detection_qam_over_awgn.ipynb are located in files_01_detection. We keep only the first string of the notebook name. All these folders will be located both at the local disk and, to be reached by Colab, at LASSE's google drive.
 
 ## Jupyter Notebooks and corresponding responsible person(s)
 
