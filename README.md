@@ -1,9 +1,11 @@
 # ai6g
 Artificial intelligence / machine learning in 5G / 6G mobile networks
 
-## Jupyter Notebooks and corresponding responsible person
+## Conventions
 
 Please note the convention regarding naming: keep the name. Each notebook has its "solution". For instance, 01_detection_qam_over_awgn.ipynb has the associated solutions_01_detection_qam_over_awgn.ipynb
+
+## Jupyter Notebooks and corresponding responsible person(s)
 
 01_detection_qam_over_awgn.ipynb – Classification with AWGN and artificial channels using several classifiers of scikit-learn, do not use Keras. We have the theoretical best result - Concepts: 1) increase number of sampling examples, 2) multi-condition training, with several SNRs to show generalization capability. The solution shows the sample complexity for several classifiers. Lesson: nothing better than more data - Douglas e José
 
@@ -25,9 +27,9 @@ Please note the convention regarding naming: keep the name. Each notebook has it
 
 10_channel_estimation_using_gan.ipynb - GAN: https://github.com/YudiDong/Channel_Estimation_cGAN - Yuichi (note: Wesin has executed this code and I know the author)
 
-11_time_series_processing.ipynb  – Synthetic channel data. Sequences, LSTM + GRU + Transformer - codigo do Globecom - Rodrigo
+11_time_series_processing.ipynb  – Synthetic channel data. Sequences, LSTM + GRU + Transformer - codigo do Globecom for synthetic data, and tracking? - Rodrigo
 
-12_anomaly_detection.ipynb - An example of Anomaly detection – From ITU Challenge? 
+12_log_files_anomaly_detection.ipynb - An example of Anomaly detection – From ITU Challenge? 
 https://aiforgood.itu.int/event/anomaly-detection-based-on-log-analysis/
 https://github.com/ITU-AI-ML-in-5G-Challenge/ITU-ML5G-PS-CN2.1-Network-cloud-equipment-anomaly-and-root-cause-analysis
 but When I browse this anomaly detection site I do not find any code, but a .key file - João e Luan
