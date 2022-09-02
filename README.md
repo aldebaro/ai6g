@@ -13,21 +13,21 @@ Please note the convention regarding naming: keep the name. Each notebook has it
 
 04_channel_estimation_hybrid_mimo.ipynb - Downlink (or uplink) channel estimation using Nuria's ITU challenge (Raymobtime). Concept: Hybrid architecture, Keras support to complex numbers, importance of additional modeling (signal processing) - Muller, Claudio e Daniel
 
-N5 – An example of Federated Learning - From ITU Challenge - Ailton
+05_federated_learning_beam_selection.ipynb - An example of Federated Learning applied to beam selection using LIDAR data - From ITU Challenge - https://github.com/ITU-AI-ML-in-5G-Challenge/PS-012-ML5G-PHY-Beam-Selection_Imperial_IPC1 - Concepts: federated learning. Ailton
 
-N6 – Channel compression with CSInet (auto-encoder / end-to-end / encoding) - Damasceno e Davi
+06_channel_compression_auto_encoder.ipynb -  Channel compression with CSInet (auto-encoder / end-to-end / encoding) - https://github.com/sydney222/Python_CsiNet - Concepts: CSI (channel) compression, auto-encoder- Damasceno e Davi
 
-N7 - Autoencoder using NVIDIA's Sionna - Luan 
+07_end_to_end_auto_encoder.ipynb - Autoencoder using NVIDIA's Sionna. Concept: end-to-end - Luan 
 
-N8 – RL paper SBrT- Rebecca
+08_finite_mdp_reinforcement_learning.ipynb - RL paper SBrT- Concept: RL - Rebecca
 
-N9 – RL-based Resource allocation – Cleverson
+09_deep_reinforcement_learning.ipynb - RL-based Resource allocation – Cleverson
 
-N10 – GAN: https://github.com/YudiDong/Channel_Estimation_cGAN - Yuichi (note: Wesin has executed this code and I know the author)
+10_channel_estimation_using_gan.ipynb - GAN: https://github.com/YudiDong/Channel_Estimation_cGAN - Yuichi (note: Wesin has executed this code and I know the author)
 
-N11 – Synthetic channel data. Sequences, LSTM + GRU + Transformer - codigo do Globecom - Rodrigo
+11_time_series_processing.ipynb  – Synthetic channel data. Sequences, LSTM + GRU + Transformer - codigo do Globecom - Rodrigo
 
-N12 – An example of Anomaly detection – From ITU Challenge? 
+12_anomaly_detection.ipynb - An example of Anomaly detection – From ITU Challenge? 
 https://aiforgood.itu.int/event/anomaly-detection-based-on-log-analysis/
 https://github.com/ITU-AI-ML-in-5G-Challenge/ITU-ML5G-PS-CN2.1-Network-cloud-equipment-anomaly-and-root-cause-analysis
 but When I browse this anomaly detection site I do not find any code, but a .key file - João e Luan
