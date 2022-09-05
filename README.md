@@ -1,6 +1,27 @@
 # ai6g
 Artificial intelligence / machine learning in 5G / 6G mobile networks
 
+## Installation
+
+### Using Conda
+
+To create the environment using conda:
+```
+conda create --name ai6g python=3.9.7
+conda activate ai6g
+```
+
+To test, no need you guys do it:  I installed stable-baseline using the instructions at
+https://github.com/conda-forge/stable-baselines3-feedstock
+In summary:
+```
+conda config --add channels conda-forge
+conda config --set channel_priority strict
+conda install stable-baselines3
+```
+
+### Using ...
+
 ## Conventions
 
 Please note the convention regarding naming and... follow it
