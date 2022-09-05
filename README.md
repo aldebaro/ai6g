@@ -3,13 +3,30 @@ Artificial intelligence / machine learning in 5G / 6G mobile networks
 
 ## Update requirements for conda or pip users
 
-Using the marvelous pipreqs:
+1) Update your conda version 
+```
+conda update -n base -c defaults conda
+```
+2) Install pip in your conda env
+```
+conda install pip
+```
+3) Install the marvelous pipreqs:
 ```
 pip install pipreqs
+```
+4) Generate a requirements.txt file only with the modules you are effectively invoking:
+```
 pipreqs d:\github\ai6g
 ```
 where d:\github\ai6g is your folder with the notebooks.
 
+5) Install the required modules
+```
+pip install -r requirements.txt
+```
+
+#### There are alternatives though:
 See https://stackoverflow.com/questions/64500342/creating-requirements-txt-in-pip-compatible-format-in-a-conda-virtual-environmen
 
 Using conda and saving all installed modules:
