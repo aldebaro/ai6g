@@ -1,6 +1,22 @@
 # ai6g
 Artificial intelligence / machine learning in 5G / 6G mobile networks
 
+## Update requirements for conda or pip users
+
+Using the marvelous pipreqs:
+```
+pip install pipreqs
+pipreqs d:\github\ai6g
+```
+where d:\github\ai6g is your folder with the notebooks.
+
+See https://stackoverflow.com/questions/64500342/creating-requirements-txt-in-pip-compatible-format-in-a-conda-virtual-environmen
+
+Using conda and saving all installed modules:
+```
+conda env export > environment.yml --no-builds
+```
+
 ## Installation
 
 ### Using Conda
