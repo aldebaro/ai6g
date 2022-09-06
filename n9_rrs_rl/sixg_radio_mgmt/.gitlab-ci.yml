@@ -1,0 +1,22 @@
+.default:
+    tags:
+        - python  
+
+black:
+    extends: .default
+    image: pipelinecomponents/black:latest
+    script:
+        - black --config pyproject.toml --check --verbose -- .
+  
+
+isort-reference:
+    extends: .default
+    image: xcgd/isort
+    script:
+        - isort --check
+        
+flake8:
+    extends: .default
+    image: pipelinecomponents/flake8:latest
+    script:
+        - flake8 --verbose .

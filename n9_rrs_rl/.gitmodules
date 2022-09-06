@@ -1,0 +1,3 @@
+[submodule "sixg_radio_mgmt"]
+	path = sixg_radio_mgmt
+	url = git@github.com:lasseufpa/sixg_radio_mgmt.git
