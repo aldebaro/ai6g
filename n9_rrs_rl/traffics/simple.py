@@ -10,4 +10,11 @@ class SimpleTraffic(Traffic):
         super().__init__(max_number_ues, rng)
 
     def step(self, step_number: int, episode_number: int) -> np.ndarray:
-        return np.ones(self.max_number_ues) * 4
+        return (
+            np.array([
+                self.rng.integers(2,5), 
+                self.rng.integers(2,5), 
+                self.rng.integers(0,3), 
+                self.rng.integers(0,3)
+                ])
+            )

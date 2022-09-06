@@ -37,7 +37,8 @@ class RoundRobin(Agent):
         return np.array(obs_space["basestation_ue_assoc"])
 
     def calculate_reward(self, obs_space: dict) -> float:
-        return 0
+        reward = -np.sum(obs_space["dropped_pkts"])
+        return reward
 
     def action_format(self, action: np.ndarray) -> np.ndarray:
         return action
