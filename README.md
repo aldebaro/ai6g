@@ -1,6 +1,39 @@
 # ai6g
 Artificial intelligence / machine learning in 5G / 6G mobile networks
 
+## Update requirements for conda or pip users
+
+1) Update your conda version 
+```
+conda update -n base -c defaults conda
+```
+2) Install pip in your conda env
+```
+conda install pip
+```
+3) Install the marvelous pipreqs:
+```
+pip install pipreqs
+```
+4) Generate a requirements.txt file only with the modules you are effectively invoking:
+```
+pipreqs d:\github\ai6g
+```
+where d:\github\ai6g is your folder with the notebooks.
+
+5) Install the required modules
+```
+pip install -r requirements.txt
+```
+
+#### There are alternatives though:
+See https://stackoverflow.com/questions/64500342/creating-requirements-txt-in-pip-compatible-format-in-a-conda-virtual-environmen
+
+Using conda and saving all installed modules:
+```
+conda env export > environment.yml --no-builds
+```
+
 ## Installation
 
 ### Using Conda
@@ -11,7 +44,29 @@ conda create --name ai6g python=3.9.7
 conda activate ai6g
 ```
 
-To test, no need you guys do it:  I installed stable-baseline using the instructions at
+To install TF 2 from 
+https://www.tensorflow.org/install/pip#windows-native
+
+with GPU
+```
+conda install -c conda-forge cudatoolkit=11.2 cudnn=8.1.0
+pip install --upgrade pip
+pip install tensorflow
+python -c "import tensorflow as tf; print(tf.reduce_sum(tf.random.normal([1000, 1000])))"
+python -c "import tensorflow as tf; print(tf.config.list_physical_devices('GPU'))"
+```
+
+Because I got the error message:
+```
+ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.
+tensorflow-probability 0.17.0 requires decorator, which is not installed.
+```
+I have executed:
+```
+pip install decorator
+```
+
+I also installed stable-baseline using the instructions at
 https://github.com/conda-forge/stable-baselines3-feedstock
 In summary:
 ```
