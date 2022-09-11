@@ -51,10 +51,15 @@ with GPU
 ```
 conda install -c conda-forge cudatoolkit=11.2 cudnn=8.1.0
 pip install --upgrade pip
-pip install tensorflow
+pip install tensorflow==2.9.2
 python -c "import tensorflow as tf; print(tf.reduce_sum(tf.random.normal([1000, 1000])))"
 python -c "import tensorflow as tf; print(tf.config.list_physical_devices('GPU'))"
 ```
+Note that you can eventually use the latest Tensorflow version (instead of the version 2.9.2 imposed above) using:
+```
+pip install tensorflow
+```
+but this code was tested with TF 2.9.2.
 
 Because I got the error message:
 ```
