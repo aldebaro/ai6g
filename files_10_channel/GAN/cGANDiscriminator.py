@@ -1,7 +1,7 @@
 import tensorflow as tf
 import numpy as np
 import matplotlib.pyplot as plt
-from GAN.cGANGenerator import EncoderLayer
+from files_10_channel.GAN.cGANGenerator import EncoderLayer
 import os
 
 
