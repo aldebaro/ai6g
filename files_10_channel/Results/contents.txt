@@ -1,0 +1,3 @@
+In this folder, results such as file
+Eest_cGAN_1_0db_Indoor2p4_64ant_32users_8pilot.mat
+are written.
