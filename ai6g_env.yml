@@ -6,6 +6,7 @@ dependencies:
   - python=3.9
   - ipywidgets
   - pip:
+    #    - tensorflow-federated
     - bidict
     - gym
     - imageio
@@ -21,3 +22,5 @@ dependencies:
     - pyscreenshot
     - pyyaml
     - tqdm
+    - hdf5storage
+    - scikit-commpy
