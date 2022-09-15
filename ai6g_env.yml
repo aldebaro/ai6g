@@ -21,3 +21,6 @@ dependencies:
     - pyscreenshot
     - pyyaml
     - tqdm
+    - hdf5storage
+    - scikit-commpy
+    - tensorflow-federated
