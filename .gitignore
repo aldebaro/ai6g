@@ -131,8 +131,7 @@ dmypy.json
 # Tensorboard logs
 logs
 
-#02_channel_estimation_1bit_mimo model file
-model.h5
-
 #ai6g datasets
 *.mat
+*.hdf5
+*.h5
