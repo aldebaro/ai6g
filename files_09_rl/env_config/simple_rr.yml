@@ -1,0 +1,33 @@
+---
+basestations:
+  max_number_basestations: 1
+  bandwidths: [8]
+  carrier_frequencies: [28]
+  num_available_rbs: [8]
+  basestation_ue_assoc: [[1, 1, 1, 1]]
+  basestation_slice_assoc: [[1]]
+slices:
+  max_number_slices: 1
+  slice_ue_assoc: [[1, 1, 1, 1]]
+  slice_req:
+    embb:
+      throughput: 10
+    urllc:
+      latency: 1
+    be:
+      long_throughput: 1
+ues:
+  max_number_ues: 4
+  max_buffer_latencies: [5, 5, 5, 5]
+  max_buffer_pkts: [5, 5, 5, 5]
+  pkt_sizes: [1, 1, 1, 1]
+associations:
+  timeline: []
+  basestation_ue_assoc: []
+  basestation_slice_assoc: []
+  slice_ue_assoc: []
+simulation:
+  simu_name: simple_rr
+  max_number_steps: 10
+  max_number_episodes: 1
+  hist_root_path: ./
