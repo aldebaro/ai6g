@@ -24,3 +24,4 @@ dependencies:
     - tqdm
     - hdf5storage
     - scikit-commpy=0.6.0
+    - sionna=0.11.0
