@@ -23,4 +23,4 @@ dependencies:
     - pyyaml
     - tqdm
     - hdf5storage
-    - scikit-commpy
+    - scikit-commpy=0.6.0
