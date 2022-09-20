@@ -55,7 +55,6 @@ def createStatesDataStructures(G=6, Nu=2, B=3):
         #     #Nu is the number of users and B the buffer size
         #     print("all_buffer_occupancy_list",all_buffer_occupancy_list)
         #     print('num of position states=', len(all_positions_list))
-        print("calculated total num S of states= ", len(all_states))
 
         N = len(all_states) #number of states
         stateGivenIndexList = list()
