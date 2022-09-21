@@ -1,5 +1,5 @@
 # ai6g
-Software for the tutorial "Artificial intelligence / machine learning in 5G / 6G mobile networks"
+Software for the tutorial "Artificial intelligence / machine learning in 5G / 6G mobile networks" by Aldebaro Klautau at SBrT'2022 in Santa Rita, Brazil. Several people contributed and the notebooks give the credits.
 
 ## Conventions
 
