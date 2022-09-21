@@ -1,5 +1,4 @@
 import numpy as np
-import numpy.typing as npt
 
 snrdb = np.arange(-30, 33, 3)
 nmse_em_bg_gamp = np.array(
@@ -29,5 +28,5 @@ nmse_em_bg_gamp = np.array(
 )
 
 
-def nmse_data() -> tuple[npt.ArrayLike, npt.ArrayLike]:
+def nmse_data():
     return (snrdb, nmse_em_bg_gamp)
