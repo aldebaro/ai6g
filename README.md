@@ -35,11 +35,13 @@ Folder name: All the files needed by notebook number x are in a folder with a na
 
 ### Using Conda
 
-To create the environment using conda:
+To create the ai6g_env environment using conda:
 ```
-conda create --name ai6g python=3.9.7
-conda activate ai6g
+conda create --name ai6g_env python=3.9.7
+conda activate ai6g_env
 ```
+(when using Jupyter notebooks, do not forget to choose this environment)
+
 
 To install TF 2 from 
 https://www.tensorflow.org/install/pip#windows-native
