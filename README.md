@@ -21,11 +21,11 @@ Folder name: All the files needed by notebook number x are in a folder with a na
 
 06_channel_compression_auto_encoder.ipynb -  CSI (channel) compression with CSInet (auto-encoder / end-to-end / encoding) based on code from https://github.com/sydney222/Python_CsiNet
 
-07_end_to_end_auto_encoder.ipynb - Autoencoder using NVIDIA's Sionna
+07_end_to_end_auto_encoder.ipynb - Autoencoder using NVIDIA's Sionna - https://developer.nvidia.com/sionna
 
-08_finite_mdp_reinforcement_learning.ipynb - Finite-stete RL toy problem
+08_finite_mdp_reinforcement_learning.ipynb - RL toy problem using a finite-state Markov decision process (MDP) to illustrate Bellman equations and modeling of RL without neural networks.
 
-09_deep_reinforcement_learning.ipynb - DRL-based Resource allocation
+09_deep_reinforcement_learning.ipynb - DRL-based resource allocation
 
 10_channel_estimation_using_gan.ipynb - GAN code based on https://github.com/YudiDong/Channel_Estimation_cGAN
 
