@@ -52,6 +52,15 @@ You have some options to execute the notebooks:
 - Wait for 10 seconds (time to initialize the VM), open your browser in your host machine (not the VM) and access the link [localhost:4321/](http://localhost:4321/) that you will be able to access the Jupyter notebook server with the notebooks running into the AI6G VM.
 
 #### 2) At Colab Google computers
+- The Colab versions of the notebooks 02, 03, 04, 06, and 10 need to access data sets that are not on the repository, therefore it is necessary to follow these two steps:
+
+1) Logged in your Google Account, enter in the link of the public folder storing the data set, named "ai6g_files" https://drive.google.com/drive/folders/1HcXb_fN590f7fesLQ1LLRoQCSuzCFZ9r 
+
+2) After that, on you "Shared with me" (Compartilhados comigo) tab, go to the "ai6g_files" folder, use the right-click button, and press the button "Add shortcut to Google Drive" (Adicionar atalho ao Google Drive)
+
+All set.
+
+While executing the notebooks that need access to this data, the Colab will ask for you to login so that it can find the files.
 
 #### 3) Using Conda to create an environment
 
