@@ -65,8 +65,8 @@ While executing the notebooks that need access to this data, the Colab will ask 
 #### 3) Using Conda to create an environment
 
 - [Install Miniconda](https://docs.conda.io/en/latest/miniconda.html)
-- Clone the AI6G github repo using `git clone https://github.com/aldebaro/ai6g.git``.
-- Download the dataset available [here FILL LINK]() into the clonned `ai6g` repo.
+- Clone the AI6G github repo using `git clone https://github.com/aldebaro/ai6g.git`.
+- Download the dataset available [here](https://drive.google.com/file/d/1knyo0Fww9FJtik3gl4Rm3bQrk_aGJQT_/view?usp=sharing) into the clonned `ai6g` repo.
 - Unzip the downloaded dataset (allow files overwriting). It is important to note that the unziped dataset content should be placed into the `files_*` directories in `ai6g` folder. For instance, the content of the unziped dataset folder `files_02_channel` should be placed into `ai6g/files_02_channel` from clonned repo.
   - A common mistake is to unzip the dataset into a new directory called `ai6g` creating a folder structure `ai6g/ai6g` that is incorrect, you should unzip the dataset into the same folder it has been placed without creating subfolders.
 -  Install conda environment using `conda env create -f ai6g_env.yml`
