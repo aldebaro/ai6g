@@ -42,8 +42,14 @@ Folder name: All the files needed by notebook number x are in a folder with a na
 You have some options to execute the notebooks:
 
 #### 1) From a VirtualBox virtual machine (VM)
+- Download the AI6G VM [here FILL THE CORRECT LINK]()
+- [Install the Virtualbox software](https://www.virtualbox.org/wiki/Downloads)
+- Open the installed Virtualbox software, click on the `file` menu and after `Import appliance` and choose the AI6G VM you downloaded on the previous step.
 
-- provide instructions
+![image](https://user-images.githubusercontent.com/12988541/191989757-987f685f-42ff-4edd-a883-b9623e617297.png)
+
+- After the VM was imported, the AI6G VM will appear in the virtualbox interface and you just need to start it clicking on Start button.
+- Wait for 10 seconds (time to initialize the VM), open your browser in your host machine (not the VM) and access the link [localhost:4321/](http://localhost:4321/) that you will be able to access the Jupyter notebook server with the notebooks running into the AI6G VM.
 
 #### 2) At Colab Google computers
 
