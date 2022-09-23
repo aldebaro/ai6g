@@ -33,11 +33,25 @@ Folder name: All the files needed by notebook number x are in a folder with a na
 
 ## Installation
 
-### Executing the notebooks from a VirtualBox virtual machine (VM)
+### The datasets (not the Python code) are available from
+
+....zip at google drive
+
+### The software organized as Jupyter notebooks
+
+You have some options to execute the notebooks:
+
+#### 1) From a VirtualBox virtual machine (VM)
 
 - provide instructions
 
-### Using Conda to create an environment and install dependencies on your computer
+#### 2) At Colab Google computers
+
+#### 3) Using Conda to create an environment
+
+git clone 
+
+To create an environment and install dependencies on your computer:
 
 To create the ai6g_env environment using conda:
 ```
