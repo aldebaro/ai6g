@@ -42,7 +42,7 @@ Folder name: All the files needed by notebook number x are in a folder with a na
 You have some options to execute the notebooks:
 
 #### 1) From a VirtualBox virtual machine (VM)
-- Download the AI6G VM [here FILL THE CORRECT LINK]()
+- Download the AI6G VM [here](https://drive.google.com/file/d/1AWlIVc7bjkrOQZL0YTkd594F5F3kyDVD/view?usp=sharing)
 - [Install the Virtualbox software](https://www.virtualbox.org/wiki/Downloads)
 - Open the installed Virtualbox software, click on the `file` menu and after `Import appliance` and choose the AI6G VM you downloaded on the previous step.
 
@@ -64,14 +64,12 @@ While executing the notebooks that need access to this data, the Colab will ask 
 
 #### 3) Using Conda to create an environment
 
-git clone 
-
-To create an environment and install dependencies on your computer:
-
-To create the ai6g_env environment using conda:
-```
-conda create --name ai6g_env python=3.9.7
-conda activate ai6g_env
-```
-(when using Jupyter notebooks, do not forget to choose this environment)
+- [Install Miniconda](https://docs.conda.io/en/latest/miniconda.html)
+- Clone the AI6G github repo using `git clone https://github.com/aldebaro/ai6g.git``.
+- Download the dataset available [here FILL LINK]() into the clonned `ai6g` repo.
+- Unzip the downloaded dataset (allow files overwriting). It is important to note that the unziped dataset content should be placed into the `files_*` directories in `ai6g` folder. For instance, the content of the unziped dataset folder `files_02_channel` should be placed into `ai6g/files_02_channel` from clonned repo.
+  - A common mistake is to unzip the dataset into a new directory called `ai6g` creating a folder structure `ai6g/ai6g` that is incorrect, you should unzip the dataset into the same folder it has been placed without creating subfolders.
+-  Install conda environment using `conda env create -f ai6g_env.yml`
+-  Execute the Jupyter notebook running `conda run -n ai6g jupyter-lab --port 4321 --NotebookApp.token='' --NotebookApp.password='' --ip 0.0.0.0 --allow-root`
+-  Access the link [localhost:4321/](http://localhost:4321/) in your browser to access Jupyter server with notebook files.
 
