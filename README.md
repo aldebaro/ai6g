@@ -33,7 +33,11 @@ Folder name: All the files needed by notebook number x are in a folder with a na
 
 ## Installation
 
-### Using Conda
+### Executing the notebooks from a VirtualBox virtual machine (VM)
+
+- provide instructions
+
+### Using Conda to create an environment and install dependencies on your computer
 
 To create the ai6g_env environment using conda:
 ```
@@ -42,72 +46,3 @@ conda activate ai6g_env
 ```
 (when using Jupyter notebooks, do not forget to choose this environment)
 
-
-To install TF 2 from 
-https://www.tensorflow.org/install/pip#windows-native
-
-with GPU
-```
-conda install -c conda-forge cudatoolkit=11.2 cudnn=8.1.0
-pip install --upgrade pip
-pip install tensorflow==2.9.2
-python -c "import tensorflow as tf; print(tf.reduce_sum(tf.random.normal([1000, 1000])))"
-python -c "import tensorflow as tf; print(tf.config.list_physical_devices('GPU'))"
-```
-Note that you can eventually use the latest Tensorflow version (instead of the version 2.9.2 imposed above) using:
-```
-pip install tensorflow
-```
-but this code was tested with TF 2.9.2.
-
-Because we got the error message:
-```
-ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.
-tensorflow-probability 0.17.0 requires decorator, which is not installed.
-```
-we have executed:
-```
-pip install decorator
-```
-
-We also installed stable-baseline using the instructions at
-https://github.com/conda-forge/stable-baselines3-feedstock
-In summary:
-```
-conda config --add channels conda-forge
-conda config --set channel_priority strict
-conda install stable-baselines3
-```
-
-## If you are helping development and want to update requirements for our conda or pip users
-
-1) Update your conda version 
-```
-conda update -n base -c defaults conda
-```
-2) Install pip in your conda env
-```
-conda install pip
-```
-3) Install the marvelous pipreqs:
-```
-pip install pipreqs
-```
-4) Generate a requirements.txt file only with the modules you are effectively invoking:
-```
-pipreqs d:\github\ai6g
-```
-where d:\github\ai6g is your folder with the notebooks.
-
-5) Install the required modules
-```
-pip install -r requirements.txt
-```
-
-#### There are alternatives though:
-See https://stackoverflow.com/questions/64500342/creating-requirements-txt-in-pip-compatible-format-in-a-conda-virtual-environmen
-
-Using conda and saving all installed modules:
-```
-conda env export > environment.yml --no-builds
-```
