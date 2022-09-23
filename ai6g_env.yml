@@ -5,6 +5,7 @@ dependencies:
   - pip
   - python=3.9
   - ipywidgets
+  - graphviz
   - pip:
     #    - tensorflow-federated
     - bidict
