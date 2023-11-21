@@ -19,8 +19,8 @@ zigzag scan:
 from __future__ import print_function
 import numpy as np
 import itertools
-import gym
-from gym import spaces
+import gymnasium
+from gymnasium import spaces
 from random import choices, randint
 
 from FiniteMDP import FiniteMDP

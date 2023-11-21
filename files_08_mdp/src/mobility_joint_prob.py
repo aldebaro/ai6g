@@ -1,10 +1,10 @@
 import numpy as np
 
-ue1_mob_file = np.load("./src/mobility_ue0.npz")
+ue1_mob_file = np.load("../mobility_ue0.npz")
 ue1_pos_actions_prob = ue1_mob_file.f.pos_actions_prob
 ue1_matrix_pos_prob = ue1_mob_file.f.matrix_pos_prob
 
-ue2_mob_file = np.load("./src/mobility_ue1.npz")
+ue2_mob_file = np.load("../mobility_ue1.npz")
 ue2_pos_actions_prob = ue2_mob_file.f.pos_actions_prob
 ue2_matrix_pos_prob = ue2_mob_file.f.matrix_pos_prob
 

@@ -29,9 +29,11 @@ from builtins import print
 # from scipy.stats import rv_discrete
 from random import choices
 #from akpy.NextStateProbabilitiesEnv import NextStateProbabilitiesEnv
-from src.NextStateProbabilitiesEnv import NextStateProbabilitiesEnv
-import gym
-from gym import spaces
+#from src.NextStateProbabilitiesEnv import NextStateProbabilitiesEnv
+from NextStateProbabilitiesEnv import NextStateProbabilitiesEnv
+#import gym
+import gymnasium as gym
+from gymnasium import spaces
 
 class FiniteMDP:
     #def __init__(self, environment: gym.Env, sparse = False):

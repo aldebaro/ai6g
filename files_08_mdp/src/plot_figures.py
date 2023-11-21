@@ -2,17 +2,17 @@ import matplotlib.pyplot as plt
 import os
 import numpy as np
 
-reward_mdp = np.load("./hist/rewards.npz")
+reward_mdp = np.load("../hist/rewards.npz")
 reward_mdp = reward_mdp.f.rewards
-reward_sac = np.load("./hist/rewards_sac.npz")
+reward_sac = np.load("../hist/rewards_sac.npz")
 reward_sac = reward_sac.f.rewards
-reward_td3 = np.load("./hist/rewards_td3.npz")
+reward_td3 = np.load("../hist/rewards_td3.npz")
 reward_td3 = reward_td3.f.rewards
-reward_ppo = np.load("./hist/rewards_ppo.npz")
+reward_ppo = np.load("../hist/rewards_ppo.npz")
 reward_ppo = reward_ppo.f.rewards
-reward_opt = np.load("./hist/rewards_opt2.npz")
+reward_opt = np.load("../hist/rewards_opt2.npz")
 reward_opt = reward_opt.f.rewards
-reward_rr = np.load("./hist/rewards_rr.npz")
+reward_rr = np.load("../hist/rewards_rr.npz")
 reward_rr = reward_rr.f.rewards
 
 

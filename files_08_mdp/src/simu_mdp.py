@@ -6,10 +6,10 @@ from UserSchedulingEnv import UserSchedulingEnv
 # print('1')
 episodes = np.arange(900, 1000)
 n_steps = 1000
-se = np.load("./src/spec_eff_matrix.npz")
+se = np.load("../spec_eff_matrix.npz")
 se = se.f.spec_eff_matrix
 env = UserSchedulingEnv()
-file_states_actions = np.load("./src/states_actions.npz", allow_pickle=True)
+file_states_actions = np.load("../states_actions.npz", allow_pickle=True)
 indexGivenStateDictionary = file_states_actions.f.indexGivenStateDictionary.item()
 # file_optimal_values = np.load("./src/optimal_values.npz")
 # optimal_policy = file_optimal_values.f.optimal_policy
@@ -37,13 +37,13 @@ if shouldPrintAll:
 	print('policy = ', optimal_policy)
 	mdp.prettyPrintValues(optimal_policy, env.stateGivenIndexList, env.actionGivenIndexList)
 
-np.save("./optimal_values.npz", state_values=state_values, optimal_action_values=optimal_action_values, optimal_policy=optimal_policy, valid_next_states=valid_next_states)
+np.save("../optimal_values.npz", state_values=state_values, optimal_action_values=optimal_action_values, optimal_policy=optimal_policy, valid_next_states=valid_next_states)
 
 buffer_size = 3
 num_incoming_packets_per_time_slot = 2
 rewards = np.zeros((len(episodes), n_steps))
 for n_episode, episode in enumerate(episodes):
-	file_pos = np.load("./mobility_traces/ep{}.npz".format(episode))
+	file_pos = np.load("../mobility_traces/ep{}.npz".format(episode))
 	for step in np.arange(n_steps):
 		print("Episode {}, step {}".format(n_episode, step))
 		pos_ues = ((file_pos.f.ue1[step][0], file_pos.f.ue1[step][1]), (file_pos.f.ue2[step][0], file_pos.f.ue2[step][1]))

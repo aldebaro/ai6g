@@ -34,13 +34,13 @@ class Scheduling_RL_render:
         self.pg.init()
         self.screen = pg.display.set_mode((600,600))
         clock = pg.time.Clock()
-        back = pg.image.load("./src/figs/grid6x6.png")
+        back = pg.image.load("./figs/grid6x6.png")
         self.back = pg.transform.scale(back, (600,600))
-        antenna = pg.image.load("./src/figs/antenna.png").convert_alpha()
+        antenna = pg.image.load("./figs/antenna.png").convert_alpha()
         self.antenna = pg.transform.scale(antenna, (40,80))
-        carro1 = pg.image.load("./src/figs/carro1.png").convert_alpha()
+        carro1 = pg.image.load("./figs/carro1.png").convert_alpha()
         self.carro1 = pg.transform.scale(carro1, (80,80))
-        carro2 = pg.image.load("./src/figs/carro2.png").convert_alpha()
+        carro2 = pg.image.load("./figs/carro2.png").convert_alpha()
         self.carro2 = pg.transform.scale(carro2, (80,80))
 
     def print_debug(self):
@@ -86,7 +86,7 @@ class Scheduling_RL_render:
       
 
   
-# if __name__ == '__main__':
-#     env = Scheduling_RL_render(should_render=True)
-#     env.print_debug()
-
+if __name__ == '__main__':
+    env = Scheduling_RL_render(should_render=True)
+    env.print_debug()
+    env.render()

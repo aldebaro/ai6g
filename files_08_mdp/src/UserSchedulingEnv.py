@@ -21,8 +21,8 @@ import sys
 from FiniteMDP import FiniteMDP
 #from akpy.NextStateProbabilitiesEnv import NextStateProbabilitiesEnv
 from NextStateProbabilitiesEnv import NextStateProbabilitiesEnv
-import gym
-from gym import spaces
+import gymnasium
+from gymnasium import spaces
 
 class UserSchedulingEnv(NextStateProbabilitiesEnv):
 
@@ -43,13 +43,13 @@ class UserSchedulingEnv(NextStateProbabilitiesEnv):
         ##NextStateProbabilitiesEnv.__init__(self,nextStateProbability, rewardsTable)
 
     def read_external_files(self):
-        ue0_file = np.load("./src/mobility_ue0.npz")
+        ue0_file = np.load("../mobility_ue0.npz")
         ue0 = ue0_file.f.matrix_pos_prob
         ue0_valid = ue0_file.f.pos_actions_prob
-        ue1_file = np.load("./src/mobility_ue1.npz")
+        ue1_file = np.load("../mobility_ue1.npz")
         ue1 = ue1_file.f.matrix_pos_prob
         ue1_valid = ue1_file.f.pos_actions_prob
-        capacity = np.load("./src/spec_eff_matrix.npz")
+        capacity = np.load("../spec_eff_matrix.npz")
         capacity = capacity.f.spec_eff_matrix
 
 
