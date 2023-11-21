@@ -3,6 +3,10 @@ Gym env using probability matrices.
 If the nextStateProbability is the correct one,
 then one can calculate the optimum solution using the methods in FiniteMDP.
 
+@TODO:
+ - support Moore (rewards associated to states) instead of only Mealy (rewards associated to transitions) (see https://www.youtube.com/watch?v=YiQxeuB56i0)
+ - ??? use a single 5-dimension matrice instead of two matrices (see Example Exercise 3.4 "Give a table analogous to that in Example 3.3)
+
 Guidelines to create a gym env:
 https://towardsdatascience.com/creating-a-custom-openai-gym-environment-for-stock-trading-be532be3910e
 '''
@@ -30,16 +34,15 @@ class NextStateProbabilitiesEnv(gym.Env):
         self.possible_states = np.arange(self.S)
 
         # initialize possible states and actions
-        self.possible_actions_per_state = [None]*(self.S)
+        self.possible_actions_per_state = list()
         for s in range(self.S):
-            self.possible_actions_per_state[0] = list()
+            self.possible_actions_per_state.append(list())
             for a in range(self.A):
                 sum_for_s_a_pair = np.sum(self.nextStateProbability[s,a])
                 if sum_for_s_a_pair > 0:
-                    self.possible_actions_per_state.append(a)
+                    self.possible_actions_per_state[s].append(a)
 
-        print(self.possible_actions_per_state)
-        exit(1)
+        print("aa", self.possible_actions_per_state)
 
         self.action_space = spaces.Discrete(self.A)
         self.observation_space = spaces.Discrete(self.S) #states are called observations in gym
