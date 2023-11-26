@@ -9,22 +9,30 @@ It assumes knowledge of the correct nextStateProbability such that it allows to 
 import numpy as np
 import itertools
 import sys
-#from akpy.FiniteMDP3 import FiniteMDP
-from FiniteMDP import FiniteMDP
-#from akpy.NextStateProbabilitiesEnv import NextStateProbabilitiesEnv
-from NextStateProbabilitiesEnv import NextStateProbabilitiesEnv
-import gym
-from gym import spaces
+import gymnasium as gym
+from gymnasium import spaces
 
-class MultibandToyExampleEnv(NextStateProbabilitiesEnv):
+from known_dynamics_env import KnownDynamicsEnv
+import finite_mdp_utils as fmdp
 
-    #def __init__(self, discount=1.0):
+
+class MultibandToyExampleEnv(KnownDynamicsEnv):
+
+    # def __init__(self, discount=1.0):
     def __init__(self):
-        #call superclass constructor
-        nextStateProbability, rewardsTable = self.createEnvironment()
-        super().__init__(nextStateProbability, rewardsTable)
-        ##NextStateProbabilitiesEnv.__init__(self,nextStateProbability, rewardsTable)
-        
+        self.__version__ = "0.1.0"
+        nextStateProbability, rewardsTable, actionDictionaryGetIndex, actionListGivenIndex, stateDictionaryGetIndex, stateListGivenIndex = self.createEnvironment()
+
+        # pack data structures (dic and list) to map names into indices for actions
+        actions_info = [actionDictionaryGetIndex, actionListGivenIndex]
+
+        # pack data structures (dic and list) to map names into indices for states
+        states_info = [stateDictionaryGetIndex, stateListGivenIndex]
+
+        # call superclass constructor
+        KnownDynamicsEnv.__init__(self, nextStateProbability, rewardsTable,
+                                  actions_info=actions_info, states_info=states_info)
+
     def prettyPrint(self):
         '''Print MDP'''
         nextStateProbability = self.nextStateProbability
@@ -35,7 +43,8 @@ class MultibandToyExampleEnv(NextStateProbabilitiesEnv):
         A = len(actionListGivenIndex)
         for s in range(S):
             currentState = stateListGivenIndex[s]
-            print('current state s', s, '=', currentState, sep='')  # ' ',end='')
+            print('current state s', s, '=',
+                  currentState, sep='')  # ' ',end='')
             for a in range(A):
                 currentAction = actionListGivenIndex[a]
                 print('  action a', a, '=', currentAction, sep='', end='')
@@ -43,7 +52,7 @@ class MultibandToyExampleEnv(NextStateProbabilitiesEnv):
                 for nexts in range(S):
                     if nextStateProbability[s, a, nexts] == 0:
                         continue
-                        #nonZeroIndices = np.where(nextStateProbability[s, a] > 0)[0]
+                        # nonZeroIndices = np.where(nextStateProbability[s, a] > 0)[0]
                     # if len(nonZeroIndices) != 2:
                     #    print('Error in logic, not 2: ', len(nonZeroIndices))
                     #    exit(-1)
@@ -51,12 +60,15 @@ class MultibandToyExampleEnv(NextStateProbabilitiesEnv):
                     newBuffers = stateListGivenIndex[nexts][0]
                     currentBuffers = currentState[0]
                     if r < 0 and r != self.outageReward:
-                        drop = self.dictionaryOfUsersWithDroppedPackets[(s,a,nexts)]
+                        drop = self.dictionaryOfUsersWithDroppedPackets[(
+                            s, a, nexts)]
                         extraPackets = np.array([0, 0, 0])
                         extraPackets[drop] = 1
-                        transmitRate = np.array([1, 1, 1]) + currentBuffers - newBuffers -extraPackets
+                        transmitRate = np.array(
+                            [1, 1, 1]) + currentBuffers - newBuffers - extraPackets
                     else:
-                        transmitRate = np.array([1, 1, 1]) + currentBuffers - newBuffers
+                        transmitRate = np.array(
+                            [1, 1, 1]) + currentBuffers - newBuffers
                     if shouldPrintOnce:
                         print(' transmit=', transmitRate)
                         shouldPrintOnce = False
@@ -78,14 +90,15 @@ class MultibandToyExampleEnv(NextStateProbabilitiesEnv):
         actionListGivenIndex = list()
         uniqueIndex = 0
         # AK-TODO could use itertools to get all combinations instead of assuming there are only 2 users and freqs.
-        frequencies = ('H','L')  #need to have F elements
+        frequencies = ('H', 'L')  # need to have F elements
         for u1 in range(M):
             for u2 in range(u1, M):
                 for f1 in range(F):
                     for f2 in range(F):
                         if u1 == u2:
                             continue
-                        actionTuple = (u1, u2, frequencies[f1], frequencies[f2])
+                        actionTuple = (
+                            u1, u2, frequencies[f1], frequencies[f2])
                         actionDictionaryGetIndex[actionTuple] = uniqueIndex
                         actionListGivenIndex.append(actionTuple)
                         uniqueIndex += 1
@@ -139,9 +152,10 @@ class MultibandToyExampleEnv(NextStateProbabilitiesEnv):
         self.alpha = alpha = 0.1  # from no to Bernoulli_extra_interference
         self.beta = beta = 0.4  # from Bernoulli_extra_interference to no
 
-        self.M = M = 3 #number of users
-        self.F = F = 2 #number of frequencies
-        actionDictionaryGetIndex, actionListGivenIndex = self.createActionsDataStructures(M, F)
+        self.M = M = 3  # number of users
+        self.F = F = 2  # number of frequencies
+        actionDictionaryGetIndex, actionListGivenIndex = self.createActionsDataStructures(
+            M, F)
         A = len(actionListGivenIndex)
 
         self.dictionaryOfUsersWithDroppedPackets = dict()
@@ -157,16 +171,17 @@ class MultibandToyExampleEnv(NextStateProbabilitiesEnv):
             (u1, u2, f1, f2) = actionListGivenIndex[actionTupleIndex]
             print('retrieved = ', (u1, u2, f1, f2))
 
-        stateDictionaryGetIndex, stateListGivenIndex = self.createStatesDataStructures(M, B)
+        stateDictionaryGetIndex, stateListGivenIndex = self.createStatesDataStructures(
+            M, B)
         S = len(stateListGivenIndex)
 
-        #rewardDictionaryGetIndex, rewardListGivenIndex = self.createRewardsDataStructures(possibleRewards)
+        # rewardDictionaryGetIndex, rewardListGivenIndex = self.createRewardsDataStructures(possibleRewards)
 
         # Assume ordering, such that 0 is always u1 (never u2) and 2 is always u2 (never u1)
         # print(actionListGivenIndex)
         # [(0, 1, 0, 0), (0, 1, 0, 1), (0, 1, 1, 0), (0, 1, 1, 1), (0, 2, 0, 0), (0, 2, 0, 1), (0, 2, 1, 0), (0, 2, 1, 1), (1, 2, 0, 0), (1, 2, 0, 1), (1, 2, 1, 0), (1, 2, 1, 1)]
 
-        #now we need to populate the nextStateProbability array and rewardsTable
+        # now we need to populate the nextStateProbability array and rewardsTable
         # In the most general case, we can represent the dynamics of the process with p(s',r | s,a).
         # Obs: this can be coded e.g. with a 4D matrix with dimension S x R x S x A.
         # But in our case, we have the reward being deterministic, not depending on next state. See:
@@ -231,41 +246,45 @@ class MultibandToyExampleEnv(NextStateProbabilitiesEnv):
                 else:
                     r = np.sum(transmitRate)
 
-                if False: #print MDP (for debugging, see prettyPrint in superclass)
+                if False:  # print MDP (for debugging, see prettyPrint in superclass)
                     if plotBar == True:
-                        print('------------------------------------------------------------------------------------------')
+                        print(
+                            '------------------------------------------------------------------------------------------')
                     plotBar = not plotBar
                     print('s=', buffersTuple, ' a', a, '=', currentAction, ' tx=', transmitRate, ' nexts=',
                           newBuffersTuple, ' drop=', drop, ' r=', r, sep='')
 
                 # probabilistic part: consider the two cases of Bernoulli_extra_interference or not
-                #rewardIndice = rewardDictionaryGetIndex[r]  # just to check if dictionary is complete
+                # rewardIndice = rewardDictionaryGetIndex[r]  # just to check if dictionary is complete
                 if currentInterference == True:
                     # stay within Bernoulli_extra_interference state
                     nextState = (newBuffersTuple, 'I')
                     nextStateIndice = stateDictionaryGetIndex[nextState]
                     nextStateProbability[s, a, nextStateIndice] = 1 - beta
                     rewardsTable[s, a, nextStateIndice] = r
-                    #memorize which users had packets dropped
+                    # memorize which users had packets dropped
                     if r < 0:
-                        self.dictionaryOfUsersWithDroppedPackets[(s,a,nextStateIndice)]=drop
+                        self.dictionaryOfUsersWithDroppedPackets[(
+                            s, a, nextStateIndice)] = drop
                     # go from Bernoulli_extra_interference to no int. state
                     nextState = (newBuffersTuple, 'N')
                     nextStateIndice = stateDictionaryGetIndex[nextState]
                     nextStateProbability[s, a, nextStateIndice] = beta
                     rewardsTable[s, a, nextStateIndice] = r
-                    #memorize which users had packets dropped
+                    # memorize which users had packets dropped
                     if r < 0:
-                        self.dictionaryOfUsersWithDroppedPackets[(s,a,nextStateIndice)]=drop
+                        self.dictionaryOfUsersWithDroppedPackets[(
+                            s, a, nextStateIndice)] = drop
                 else:
                     # stay within no Bernoulli_extra_interference state
                     nextState = (newBuffersTuple, 'N')
                     nextStateIndice = stateDictionaryGetIndex[nextState]
                     nextStateProbability[s, a, nextStateIndice] = 1 - alpha
                     rewardsTable[s, a, nextStateIndice] = r
-                    #memorize which users had packets dropped
+                    # memorize which users had packets dropped
                     if r < 0:
-                        self.dictionaryOfUsersWithDroppedPackets[(s,a,nextStateIndice)]=drop
+                        self.dictionaryOfUsersWithDroppedPackets[(
+                            s, a, nextStateIndice)] = drop
                     # go from Bernoulli_extra_interference to no int. state
                     # in this case the reward is the minimum between the "drop" penalty and outage value
                     r = np.minimum(r, self.outageReward)
@@ -273,182 +292,79 @@ class MultibandToyExampleEnv(NextStateProbabilitiesEnv):
                     nextStateIndice = stateDictionaryGetIndex[nextState]
                     nextStateProbability[s, a, nextStateIndice] = alpha
                     rewardsTable[s, a, nextStateIndice] = r
-                    #memorize which users had packets dropped
+                    # memorize which users had packets dropped
                     if r < 0:
-                        self.dictionaryOfUsersWithDroppedPackets[(s,a,nextStateIndice)]=drop
+                        self.dictionaryOfUsersWithDroppedPackets[(
+                            s, a, nextStateIndice)] = drop
 
-        #self.prettyPrint(nextStateProbability, rewardsTable, stateListGivenIndex, actionListGivenIndex)
+        # self.prettyPrint(nextStateProbability, rewardsTable, stateListGivenIndex, actionListGivenIndex)
 
-        self.actionDictionaryGetIndex = actionDictionaryGetIndex
-        self.actionListGivenIndex = actionListGivenIndex
-        self.stateDictionaryGetIndex = stateDictionaryGetIndex
-        self.stateListGivenIndex = stateListGivenIndex
-        #self.rewardDictionaryGetIndex = rewardDictionaryGetIndex
-        #self.rewardListGivenIndex = rewardListGivenIndex
-        #self.nextStateProbability = nextStateProbability
-        #self.rewardsTable = rewardsTable
-        #self.environment = NextStateProbabilitiesEnv(nextStateProbability, rewardsTable)
-
-        return nextStateProbability, rewardsTable
+        return nextStateProbability, rewardsTable, actionDictionaryGetIndex, actionListGivenIndex, stateDictionaryGetIndex, stateListGivenIndex
 
     def postprocessing_MDP_step(self, history, printPostProcessingInfo):
         '''This method overrides its superclass equivalent and
         allows to post-process the results'''
         currentIteration = history["time"]
-        s= history["state_t"]
+        s = history["state_t"]
         a = history["action_t"]
         reward = history["reward_tp1"]
         nexts = history["state_tp1"]
 
-        currentState = self.stateListGivenIndex[s]
-        nextState = self.stateListGivenIndex[nexts]
+        if isinstance(s, int):
+            currentState = self.stateListGivenIndex[s]
+            nextState = self.stateListGivenIndex[nexts]
+        else:
+            currentState = s
+            nextState = nexts
+            # s, a and nexts must be indices here
+            s = self.stateDictionaryGetIndex[s]
+            nexts = self.stateDictionaryGetIndex[nexts]
+            a = self.actionDictionaryGetIndex[a]
+
+        # state is something as s ((1, 1, 0), 'N')
         currentBuffer = np.array(nextState[0])
         nextBuffer = np.array(currentState[0])
 
-        transmittedPackets = np.array([1,1,1])+currentBuffer-nextBuffer
-        if reward < 0: #there was packet drop
-            drop=self.dictionaryOfUsersWithDroppedPackets[(s,a,nexts)]
+        transmittedPackets = np.array([1, 1, 1])+currentBuffer-nextBuffer
+        if reward < 0:  # there was packet drop
+            drop = self.dictionaryOfUsersWithDroppedPackets[(s, a, nexts)]
             transmittedPackets[drop] += -1
             droppedPackets = np.zeros((self.M,))
             droppedPackets[drop] = 1
             self.packetDropCounts += droppedPackets
-        #compute bit rate
+        # compute bit rate
         self.bitRates += transmittedPackets
         if printPostProcessingInfo:
             print(self.bitRates, self.packetDropCounts)
-        #print('accumulated rates =', self.bitRates, ' drops =', self.packetDropCounts)
-        #print('kkkk = ', s, action, reward, nexts)
+        # print('accumulated rates =', self.bitRates, ' drops =', self.packetDropCounts)
+        # print('kkkk = ', s, action, reward, nexts)
 
     def resetCounters(self):
-        #reset counters
+        # reset counters
         self.bitRates = np.zeros((self.M,))
         self.packetDropCounts = np.zeros((self.M,))
 
-def run_all():
-    #mdp = FiniteMDP(discount=0.9)
-    shouldPrintAll = True
-    env = MultibandToyExampleEnv()
-    mdp = FiniteMDP(env)
-
-    #nextStateProbability, rewardsTable = createFiniteMDP()
-    # nextStateProbability, rewardsTable = get_mdp_for_grid_world()
-    # nextStateProbability, rewardsTable = get_simple_mdp()
-    equiprobable_policy = mdp.getEquiprobableRandomPolicy()
-    state_values, iteration = mdp.compute_state_values(equiprobable_policy)
-
-    if shouldPrintAll:
-        print('In-place:')
-        print('State values under random policy after %d iterations', (iteration))
-        print(state_values)
-
-    state_values, iteration = mdp.compute_state_values(equiprobable_policy)
-    if shouldPrintAll:
-        print('Synchronous:')
-        print('State values under random policy after %d iterations', (iteration))
-        print(state_values)
-
-    state_values, iteration = mdp.compute_optimal_state_values()
-    if shouldPrintAll:
-        print('Optimum states, iteration = ', iteration, ' state_values = ', np.round(state_values, 1))
-
-    optimal_action_values, iteration = mdp.compute_optimal_action_values()
-    if shouldPrintAll:
-        print('Optimum actions, iteration = ', iteration, ' action_values = ', np.round(optimal_action_values, 1))
-
-    #AK-TODO no need to be class method
-    optimal_policy = mdp.convert_action_values_into_policy(optimal_action_values)
-    if shouldPrintAll:
-        print('policy = ', optimal_policy)
-        mdp.prettyPrintValues(optimal_policy, env.stateListGivenIndex, env.actionListGivenIndex)
-
-    q_learning_policy, rewardsQLearning = mdp.execute_q_learning(maxNumIterations=100)
-
-    #print('Example: ')
-    if False:
-        mdp.run_MDP_for_given_policy(optimal_policy, maxNumIterations=100)
-    else:
-        mdp.run_MDP_for_given_policy(equiprobable_policy,maxNumIterations=100)
 
 def evaluateLearning():
     env = MultibandToyExampleEnv()
-    mdp = FiniteMDP(env)
     alphas = (0.1, 0.3, 0.5, 0.7, 0.9, 0.99)
     epsilons = (0.1, 0.01, 0.001)
     for a in alphas:
         for e in epsilons:
-            #print('alpha=',a,'epsilon=',e)
+            # print('alpha=',a,'epsilon=',e)
             fileName = 'smooth_q_eps' + str(e) + '_alpha' + str(a) + '.txt'
             sys.stdout = open(fileName, 'w')
-            action_values, rewardsQLearning = mdp.execute_q_learning(maxNumIterations=1000, maxNumIterationsQLearning = 1,
-                                                                     num_runs = 20, stepSizeAlpha=a, explorationProbEpsilon=e)
+            action_values, rewardsQLearning = fmdp.q_learning_several_episodes(
+                env, num_runs=20, stepSizeAlpha=a, explorationProbEpsilon=e)
             for i in range(len(rewardsQLearning)):
                 print(rewardsQLearning[i])
 
-def compareOptimalAndQLearningPolicies():
-
-    env = MultibandToyExampleEnv()
-    mdp = FiniteMDP(env)
-    N=10000
-    maxNumIterations=100
-    statsQLearning = list()
-    statsOptimal = list()
-    for i in range(N):
-        print(i)
-        action_valuesOptimal, iteration = mdp.compute_optimal_action_values()
-        action_valuesQLearning, rewardsQLearning = mdp.execute_q_learning(maxNumIterations=400, maxNumIterationsQLearning = 1,
-                                                                          num_runs = 1, stepSizeAlpha=0.5, explorationProbEpsilon=0.001)
-        policyOptimal = mdp.convert_action_values_into_policy(action_valuesOptimal)
-        policyQ = mdp.convert_action_values_into_policy(action_valuesQLearning)
-        #to get performance while testing only
-        env.resetCounters()
-        print('Optimal')
-        mdp.run_MDP_for_given_policy(policyOptimal,maxNumIterations=maxNumIterations,printPostProcessingInfo=False)
-        statsOptimal.append( (np.sum(env.bitRates),  np.sum(env.packetDropCounts)) )
-        env.resetCounters()
-        print('Q-learning')
-        mdp.run_MDP_for_given_policy(policyQ,maxNumIterations=maxNumIterations,printPostProcessingInfo=False)
-        statsQLearning.append( (np.sum(env.bitRates)/maxNumIterations,  np.sum(env.packetDropCounts)/maxNumIterations) )
-
-    sys.stdout = open('optimal.txt', 'w')
-    for values in statsOptimal:
-        print(values[0], values[1])
-
-    sys.stdout = open('qlearning.txt', 'w')
-    for values in statsQLearning:
-        print(values[0], values[1])
 
 if __name__ == '__main__':
-    run_all()
-    environment = MultibandToyExampleEnv()
-    environment.prettyPrint()
-    mdp = FiniteMDP(environment)
-    #evaluateLearning()
-    compareOptimalAndQLearningPolicies()
-
-    #compareOptimalAndQLearningPolicies()
-    #exit(1)
-    
-    print('AK')
-    #mdp = MultibandFiniteMDPToyExample(discount=0.9)
-    #mdp.prettyPrint()
-    exit(1)
-    if False:
-        action_values, iteration = mdp.compute_optimal_action_values()
-    else:
-        action_values, rewardsQLearning = mdp.execute_q_learning(maxNumIterations=1000, maxNumIterationsQLearning = 1,
-                                                                 num_runs = 1000, stepSizeAlpha=0.9, explorationProbEpsilon=0.1)
-        if False: #to get performance while training
-            for i in range(len(rewardsQLearning)):
-                print(rewardsQLearning[i])
-        exit(1)
-
-    if False:
-        policy = action_values
-    else:
-        policy = mdp.convert_action_values_into_policy(action_values)
-
-    #to get performance while testing only
-    while True:
-        mdp.run_MDP_for_given_policy(policy,maxNumIterations=10,printInfo=False, printPostProcessingInfo=False)
-
-    #mdp.prettyPrintPolicy(policy)
+    env = MultibandToyExampleEnv()
+    env.prettyPrint()
+    fmdp.compare_q_learning_with_optimum_policy(
+        env, output_files_prefix="MultibandToyExample")
+    if True:
+        # this may take long time to run
+        fmdp.hyperparameter_grid_search(env)
