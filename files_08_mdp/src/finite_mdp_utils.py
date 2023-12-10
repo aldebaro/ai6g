@@ -16,6 +16,8 @@ Note that a policy is represented here as a matrix S x A, providing a distributi
 over the possible actions for each state. A matrix with the state values can be
 easily converted into a policy. 
 
+@TODO - use pickle to save optimal policies
+
 Aldebaro. Oct 25, 2023.
 '''
 from __future__ import print_function
@@ -96,7 +98,7 @@ def compute_optimal_state_values_nonsparse(env: KnownDynamicsEnv, discountGamma=
     # assert isinstance(env, KnownDynamicsEnv)
     S = env.S
     A = env.A
-    # (S, A, nS) = env.nextStateProbability.shape
+    # (S, A, S) = env.nextStateProbability.shape
     # A = len(actionListGivenIndex)
     new_state_values = np.zeros((S,))
     state_values = np.zeros((S,))
@@ -174,7 +176,7 @@ def compute_optimal_state_values(env: KnownDynamicsEnv, discountGamma=0.9, use_n
                 a_candidates[a] = value
             new_state_values[s] = np.max(a_candidates)
         improvement = np.sum(np.abs(new_state_values - state_values))
-        # print('improvement =', improvement)
+        print('improvement =', improvement)
         if False:  # debug
             print('state values=', state_values)
             print('new state values=', new_state_values)
@@ -292,7 +294,7 @@ def compute_optimal_action_values(env: KnownDynamicsEnv,
             stopping_criterion = np.max(
                 abs_difference_array)/np.max(np.abs(new_action_values))
         stopping_criteria_per_iteration.append(stopping_criterion)
-        # print('DEBUG: stopping_criterion =', stopping_criterion)
+        print('DEBUG: stopping_criterion =', stopping_criterion)
         if False:  # debug
             print('state values=', action_values)
             print('new state values=', new_action_values)
@@ -773,7 +775,7 @@ def TODO_estimate_model_probabilities(env: gym.Env):
 
 if __name__ == '__main__':
 
-    test_dealing_with_sparsity()
+    # test_dealing_with_sparsity() # helps to debug, comparing methods
 
     values = np.array([[3, 5, -4, 2], [10, 10, 0, -20]])
     policy = convert_action_values_into_policy(values)

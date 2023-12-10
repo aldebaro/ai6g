@@ -314,7 +314,7 @@ def createDefaultDataStructures(num_actions, prefix) -> tuple[dict, list]:
 
 if __name__ == "__main__":
     # Choose: 1) simple matrices, 2) recycle robot from Sutton's textbook, 3) random and 4) very simple
-    chosen_example = 3
+    chosen_example = 2
     # np.random.seed(110) # enable to repeat experiments
     if chosen_example == 1:
         env = SimpleKnownDynamicsEnv()

@@ -1,4 +1,7 @@
 '''
+
+This problem is described in the paper https://biblioteca.sbrt.org.br/articles/3686
+
 Implements a simple user scheduling environment consisting of a finite MDP.
 The user positions are numbered from top-left to bottom-right in
 zigzag scan. Assuming G=6:
@@ -21,6 +24,15 @@ on the grid position. Therefore, the channel spectral efficiency is provided
 by a G x G matrix, which is valid for all users. This spectral efficiency is
 provided in number of packets that can be transmitted per channel use, in a
 given time slot.
+
+@TODO - support rendering with pygame. Get already created code.
+@TODO - obtain the SE based on the positions p1 and p2, now it is fixed and arbitrary
+@TODO - Use the same nomenclature. Sometimes we use:
+        stateDictionaryGetIndex, stateListGivenIndex
+        and others:
+        self.indexGivenStateDictionary, self.stateGivenIndexList
+        The same for actions.
+
 '''
 import numpy as np
 import itertools
@@ -29,52 +41,63 @@ import os
 
 from known_dynamics_env import KnownDynamicsEnv
 import finite_mdp_utils as fmdp
+from mobility_utils import all_valid_next_moves, combined_users_positions, one_step_moves_in_grid
 
 
 class UserSchedulingEnv(KnownDynamicsEnv):
 
-    def __init__(self):
-        self.ues_pos_prob, self.channel_spectral_efficiencies, self.ues_valid_actions = self.read_external_files()
+    def __init__(self, G=6, B=3, Nu=2, num_pkts_per_tti=2,
+                 can_users_share_position=False,
+                 should_add_not_moving=False,
+                 print_debug_info=False):
+        self.G = G  # grid dimension
+        self.B = B  # buffer size
+        self.Nu = Nu  # number of users
+        self.num_incoming_packets_per_time_slot = num_pkts_per_tti
+        self.can_users_share_position = can_users_share_position
+        self.should_add_not_moving = should_add_not_moving
+        self.print_debug_info = print_debug_info
 
-        self.channel_spectral_efficiencies = get_channel_spectral_efficiency()
+        self.actions_move = one_step_moves_in_grid(
+            should_add_not_moving=should_add_not_moving)
 
-        print("self.channel_spectral_efficiencies",
-              self.channel_spectral_efficiencies)
-        # print(self.ues_valid_actions[0])
-        # print(len(self.ues_pos_prob[1][4]))
+        self.indexGivenActionDictionary, self.actionGivenIndexList = createActionsDataStructures(
+            self.Nu)
+        self.A = len(self.actionGivenIndexList)
 
-        self.actions_move = np.array([
-            [-1, 0],
-            [0, 1],
-            [1, 0],
-            [0, -1],
-            [0, 0],
-        ])  # Up, right, down, left, stay
+        self.indexGivenStateDictionary, self.stateGivenIndexList = createStatesDataStructures(
+            self.actions_move, G=self.G, Nu=self.Nu, B=self.B, can_users_share_position=can_users_share_position,
+            show_debug_info=self.print_debug_info)
 
-        nextStateProbability, rewardsTable, actionDictionaryGetIndex, actionListGivenIndex, stateDictionaryGetIndex, stateListGivenIndex = self.createEnvironment()
+        self.S = len(self.stateGivenIndexList)
+
+        # self.ues_pos_prob, self.channel_spectral_efficiencies, self.ues_valid_actions = self.read_external_files()
+
+        if True:
+            self.channel_spectral_efficiencies = (
+                self.num_incoming_packets_per_time_slot+1)*np.ones((G, G))
+        else:
+            self.channel_spectral_efficiencies = get_channel_spectral_efficiency()
+
+        if self.print_debug_info:
+            print("self.channel_spectral_efficiencies",
+                  self.channel_spectral_efficiencies)
+
+        nextStateProbability, rewardsTable = self.createEnvironment()
 
         # pack data structures (dic and list) to map names into indices for actions
-        actions_info = [actionDictionaryGetIndex, actionListGivenIndex]
+        actions_info = [self.indexGivenActionDictionary,
+                        self.actionGivenIndexList]
 
         # pack data structures (dic and list) to map names into indices for states
-        states_info = [stateDictionaryGetIndex, stateListGivenIndex]
+        states_info = [self.indexGivenStateDictionary,
+                       self.stateGivenIndexList]
 
         # call superclass constructor
         KnownDynamicsEnv.__init__(self, nextStateProbability, rewardsTable,
                                   actions_info=actions_info, states_info=states_info)
-        print("INFO: finished creating environment")
-
-    def read_external_files(self):
-        ue0_file = np.load("../mobility_ue0.npz")
-        ue0 = ue0_file.f.matrix_pos_prob
-        ue0_valid = ue0_file.f.pos_actions_prob
-        ue1_file = np.load("../mobility_ue1.npz")
-        ue1 = ue1_file.f.matrix_pos_prob
-        ue1_valid = ue1_file.f.pos_actions_prob
-        capacity = np.load("../spec_eff_matrix.npz")
-        capacity = capacity.f.spec_eff_matrix
-
-        return ([ue0, ue1], capacity, [ue0_valid, ue1_valid])
+        if self.print_debug_info:
+            print("INFO: finished creating environment")
 
     def prettyPrint(self):
         """
@@ -111,37 +134,35 @@ class UserSchedulingEnv(KnownDynamicsEnv):
     def createEnvironment(self):
         '''
         The state is defined as the position of the two users and their buffers occupancy.
-        The action is to select one of the two users.
-        Given that Nu=2 and G=6, there are S=20736 states and A=2 actions
-        The wireless channel is fixed: each grid point has a given channel that does not change.
+        The action is to select one of the Nu users.
+        Given that Nu=2, B=3 and G=6, there are S=xx states and A=2 actions
+        The channel is fixed.
         The base station (BS) is located at the bottom-left corner.
         '''
-        G = 6  # grid dimension
-        B = 3  # buffer size
-        Nu = 2  # number of users
-        num_incoming_packets_per_time_slot = 2
-
-        actionDictionaryGetIndex, actionListGivenIndex = createActionsDataStructures()
-        A = len(actionListGivenIndex)
-
-        stateDictionaryGetIndex, stateListGivenIndex = createStatesDataStructures()
-        S = len(stateListGivenIndex)
-
-        # np.savez_compressed("states_actions.npz", stateDictionaryGetIndex=stateDictionaryGetIndex, stateListGivenIndex=stateListGivenIndex, actionDictionaryGetIndex=actionDictionaryGetIndex, actionListGivenIndex=actionListGivenIndex)
 
         # now we need to populate the nextStateProbability array and rewardsTable,
         # the distribution p(s'|s,a) and expected values r(s,a,s') as in Example 3.3 of [Sutton, 2018], page 52.
         # In this case the distribution p can be stored in a 3d matrix of dimension S x A x S and the reward table in
         # another matrix with the same dimension.
-        nextStateProbability = np.zeros((S, A, S))
-        rewardsTable = np.zeros((S, A, S))
-        for s in range(S):
+        nextStateProbability = np.zeros((self.S, self.A, self.S))
+        rewardsTable = np.zeros((self.S, self.A, self.S))
+        # to define the mobility pattern, find all next positions
+        disabled_positions = list()
+        # disable the base station position: users cannot ocuppy it
+        disabled_positions.append(np.array([self.G-1, 0]))
+        all_valid_next_positions = all_valid_next_moves(self.G, disabled_positions,
+                                                        should_add_not_moving=self.should_add_not_moving,
+                                                        number_of_users=self.Nu,
+                                                        can_users_share_position=self.can_users_share_position)
+        for s in range(self.S):
             # current state:
-            currentState = stateListGivenIndex[s]
-            (all_positions, buffers_occupancy) = currentState  # interpret the state
-            # print('Reading state: positions=', all_positions,'buffers=',buffers_occupancy)
-            for a in range(A):
-                currentAction = actionListGivenIndex[a]
+            currentState = self.stateGivenIndexList[s]
+            # interpret the state
+            (all_positions, new_buffer_occupancy_tuple) = currentState
+            # print('Reading state: positions=', all_positions,
+            #      'buffers=', new_buffer_occupancy_tuple)
+            for a in range(self.A):
+                # currentAction = self.actionGivenIndexList[a]
                 chosen_user = a  # in this case, the action is the user
                 # get the channels spectral efficiency (SE)
                 chosen_user_position = all_positions[chosen_user]
@@ -149,54 +170,56 @@ class UserSchedulingEnv(KnownDynamicsEnv):
                 se = self.channel_spectral_efficiencies[chosen_user_position[0],
                                                         chosen_user_position[1]]
                 # based on selected (chosen) user, update its buffer
-                transmitRate = se  # transmitted packets
+                num_packets_supported_by_channel = se  # it is not the transmitted packets
 
-                new_buffer = np.array(buffers_occupancy)
+                # Update buffer according to action and packet transmission
+                new_buffer = np.array(new_buffer_occupancy_tuple)
                 # decrement buffer of chosen user
-                new_buffer[chosen_user] -= transmitRate
-                new_buffer[new_buffer < 0] = 0
-                new_buffer += num_incoming_packets_per_time_slot  # arrival of new packets
+                new_buffer[chosen_user] -= num_packets_supported_by_channel
 
-                # check if overflow
+                # in case there were less packets in buffer than the channel supports
+                if new_buffer[chosen_user] < 0:
+                    num_unavailable_packets = -new_buffer[chosen_user]
+                    num_transmitted_packets = num_packets_supported_by_channel - num_unavailable_packets
+                    new_buffer[chosen_user] = 0
+                else:
+                    num_transmitted_packets = num_packets_supported_by_channel
+
+                # Update buffer based on arrival of new packets
+                new_buffer += self.num_incoming_packets_per_time_slot  # arrival of new packets
+
+                # check if buffer overflow occurred
                 # in case positive, limit the buffers to maximum capacity
-                number_dropped_packets = new_buffer - B
+                number_dropped_packets = new_buffer - self.B
+                # no packets dropped in this case
                 number_dropped_packets[number_dropped_packets < 0] = 0
 
-                # saturate buffer levels
+                # take in account buffer capacity and update in case packets were dropped
                 new_buffer -= number_dropped_packets
 
-                # convert to tuple to compose state
-                buffers_occupancy = tuple(new_buffer)
+                # convert to tuple to compose part of the new state
+                new_buffer_occupancy_tuple = tuple(new_buffer)
 
-                # calculate rewards
+                # calculate reward
                 sumDrops = np.sum(number_dropped_packets)
-                r = -sumDrops
+                r = 10-sumDrops  # option 1
+                # r = num_transmitted_packets-sumDrops  # option 2
 
-                for ue1_action in np.arange(5):
-                    for ue2_action in np.arange(5):
-                        prob_ue1_action = self.ues_valid_actions[0][all_positions[0]
-                                                                    [0], all_positions[0][1]][ue1_action]
-                        prob_ue2_action = self.ues_valid_actions[1][all_positions[1]
-                                                                    [0], all_positions[1][1]][ue2_action]
-                        if prob_ue1_action != 0 and prob_ue2_action != 0:
-                            # calculate nextState
-                            new_position_ue1 = np.array(
-                                all_positions[0]) + self.actions_move[ue1_action]
-                            new_position_ue2 = np.array(
-                                all_positions[1]) + self.actions_move[ue2_action]
-                            # if not (np.array_equal(new_position_ue1, new_position_ue2)) and not np.array_equal(new_position_ue1, np.array([5,0])) and not np.array_equal(new_position_ue2, np.array([5,0])):
-                            new_position = (
-                                (new_position_ue1[0], new_position_ue1[1]), (new_position_ue2[0], new_position_ue2[1]))
-                            nextState = (new_position, buffers_occupancy)
+                # probabilistic part: consider the user mobility
+                valid_next_positions = all_valid_next_positions[all_positions]
+                # define a probability value to each new position
+                num_valid_next_positions = len(valid_next_positions)
+                # impose uniform probability
+                prob = 1.0 / num_valid_next_positions
+                for next_pos in valid_next_positions:
+                    # compose the state
+                    new_state = (next_pos, new_buffer_occupancy_tuple)
+                    nextStateIndice = self.indexGivenStateDictionary[new_state]
 
-                            # probabilistic part: consider the user mobility
-                            nextStateIndice = stateDictionaryGetIndex[nextState]
-                            # /take in account mobility
-                            nextStateProbability[s, a,
-                                                 nextStateIndice] = prob_ue1_action * prob_ue2_action
-                            rewardsTable[s, a, nextStateIndice] = r
+                    nextStateProbability[s, a, nextStateIndice] = prob
+                    rewardsTable[s, a, nextStateIndice] = r
 
-        return nextStateProbability, rewardsTable, actionDictionaryGetIndex, actionListGivenIndex, stateDictionaryGetIndex, stateListGivenIndex
+        return nextStateProbability, rewardsTable
 
     def TODO_postprocessing_MDP_step(self, history, printPostProcessingInfo):
         '''This method overrides its superclass equivalent and
@@ -235,7 +258,7 @@ class UserSchedulingEnv(KnownDynamicsEnv):
             self.packetDropCounts += droppedPackets
         # compute bit rate
         self.bitRates += transmittedPackets
-        if printPostProcessingInfo:
+        if printPostProcessingInfo:  # use self.print_debug_info
             print(self.bitRates, self.packetDropCounts)
         # print('accumulated rates =', self.bitRates, ' drops =', self.packetDropCounts)
         # print('kkkk = ', s, action, reward, nexts)
@@ -246,17 +269,28 @@ class UserSchedulingEnv(KnownDynamicsEnv):
         self.packetDropCounts = np.zeros((self.M,))
 
 
-def createActionsDataStructures():
+def createActionsDataStructures(Nu) -> tuple[dict, list]:
     """
-        Assumes Nu=2 users.
+    Nu is the number of users.
+    Example assuming Nu=2 users: ['u0', 'u1']
     """
-    possibleActions = ['u1', 'u2']
+    possibleActions = list()
+    for u in range(Nu):
+        possibleActions.append("u" + str(u))
     dictionaryGetIndex = dict()
     listGivenIndex = list()
     for uniqueIndex in range(len(possibleActions)):
         dictionaryGetIndex[possibleActions[uniqueIndex]] = uniqueIndex
         listGivenIndex.append(possibleActions[uniqueIndex])
     return dictionaryGetIndex, listGivenIndex
+
+
+def init_next_state_probability():
+    pass
+
+
+def init_rewards():
+    pass
 
 
 def get_channel_spectral_efficiency(G=6, ceil_value=5) -> np.ndarray:
@@ -276,43 +310,30 @@ def get_channel_spectral_efficiency(G=6, ceil_value=5) -> np.ndarray:
     return channel_spectral_efficiencies
 
 
-def createStatesDataStructures(G=6, Nu=2, B=3):
-    show_debug_info = False
+def createStatesDataStructures(possible_movements, G=6, Nu=2, B=3, can_users_share_position=False, show_debug_info=True) -> tuple[dict, list]:
     # G is the axis dimension, on both horizontal and vertical
     # I cannot use below:
     # all_positions_list = list(itertools.product(np.arange(G), repeat=2))
     # because the base station is at position (G-1, 0) and users cannot be
     # in the same position at the same time
     if show_debug_info:
-        print("theoretical S=", (G**2)*(G**2)*((B+1)**Nu))
+        num_states = (B+1)**Nu  # initialize
+        if can_users_share_position:
+            for i in range(Nu):
+                num_states *= (G**2)-(i+1)
+        else:
+            num_states *= (G**2-1)**Nu
+        print("theoretical number of states =", num_states)
 
-    # bs_position = (G-1, 0) #Base station position
+    bs_position = (G-1, 0)  # Base station position
+    disabled_positions = list()
+    disabled_positions.append(bs_position)
 
-    all_positions_of_single_user = list()
-    for i in range(G):
-        for j in range(G):
-            # if (i == bs_position[0]) and (j == bs_position[1]):
-            # continue #do not allow user at the BS position
-            all_positions_of_single_user.append((i, j))
-
-    # create Cartesian product among positions of users
-    all_positions_list = list(itertools.product(
-        all_positions_of_single_user, repeat=Nu))
-    # need to remove the positions that coincide
-    N = len(all_positions_list)
-    # print("N=",N)
-    # i = 0
-    # while (True):
-    #     positions_pair = all_positions_list[i]
-    #     position_u1 = positions_pair[0]
-    #     position_u2 = positions_pair[1]
-    #     if position_u1 == position_u2:
-    #         all_positions_list.pop(i)
-    #         N -= 1 #decrement the number N of elements in list
-    #     else:
-    #         i += 1 #continue searching the list
-    #     if i >= N:
-    #         break
+    all_positions_list = combined_users_positions(G,
+                                                  disabled_positions,
+                                                  possible_movements,
+                                                  number_of_users=Nu,
+                                                  can_users_share_position=can_users_share_position)
 
     all_buffer_occupancy_list = list(
         itertools.product(np.arange(B + 1), repeat=Nu))
@@ -328,18 +349,18 @@ def createStatesDataStructures(G=6, Nu=2, B=3):
         print("calculated total num S of states= ", len(all_states))
 
     N = len(all_states)  # number of states
-    stateListGivenIndex = list()
-    stateDictionaryGetIndex = dict()
+    stateGivenIndexList = list()
+    indexGivenStateDictionary = dict()
     uniqueIndex = 0
     # add states to both dictionary and its inverse mapping (a list)
     for i in range(N):
-        stateListGivenIndex.append(all_states[i])
-        stateDictionaryGetIndex[all_states[i]] = uniqueIndex
+        stateGivenIndexList.append(all_states[i])
+        indexGivenStateDictionary[all_states[i]] = uniqueIndex
         uniqueIndex += 1
     if False:
-        print('stateDictionaryGetIndex = ', stateDictionaryGetIndex)
-        print('stateListGivenIndex = ', stateListGivenIndex)
-    return stateDictionaryGetIndex, stateListGivenIndex
+        print('indexGivenStateDictionary = ', indexGivenStateDictionary)
+        print('stateGivenIndexList = ', stateGivenIndexList)
+    return indexGivenStateDictionary, stateGivenIndexList
 
 
 def check_matrix(nextStateProbability):
@@ -358,6 +379,7 @@ def check_matrix(nextStateProbability):
 
 
 if __name__ == '__main__':
+    print("Running main of simple_user_scheduling_env.py")
     print("Creating the UserSchedulingEnv environment... It takes some time.")
 
     file_path = "UserSchedulingEnv.pickle"
@@ -367,14 +389,18 @@ if __name__ == '__main__':
     else:
         print(
             f"The file {file_path} does not exist. I will create the object and create the file")
-        env = UserSchedulingEnv()  # grid of size G = 6
+        env = UserSchedulingEnv(
+            G=4, B=2, Nu=2, num_pkts_per_tti=1,
+            can_users_share_position=True,
+            should_add_not_moving=True,
+            print_debug_info=False)  # G is the grid size
         pickle.dump(env, open(file_path, "wb"))
 
     # env.prettyPrint()
     # check_matrix(env.nextStateProbability) # it was ok
 
     print("Example of action:", env.actionListGivenIndex[0])
-    print("Example of state:", env.stateListGivenIndex[302])
+    print("Example of state:", env.stateListGivenIndex[30])
 
     # try one step
     action = 0
