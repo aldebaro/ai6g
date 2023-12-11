@@ -16,8 +16,6 @@ Note that a policy is represented here as a matrix S x A, providing a distributi
 over the possible actions for each state. A matrix with the state values can be
 easily converted into a policy. 
 
-@TODO - use pickle to save optimal policies
-
 Aldebaro. Oct 25, 2023.
 '''
 from __future__ import print_function
@@ -27,7 +25,7 @@ from random import choices
 import gymnasium as gym
 from gymnasium import spaces
 
-from known_dynamics_env import KnownDynamicsEnv, SimpleKnownDynamicsEnv, RandomKnownDynamicsEnv
+from known_dynamics_env import KnownDynamicsEnv, SimpleKnownDynamicsEnv, RandomKnownDynamicsEnv, RecycleRobotEnv
 
 
 def check_if_fmdp(environment: gym.Env):
@@ -98,7 +96,7 @@ def compute_optimal_state_values_nonsparse(env: KnownDynamicsEnv, discountGamma=
     # assert isinstance(env, KnownDynamicsEnv)
     S = env.S
     A = env.A
-    # (S, A, S) = env.nextStateProbability.shape
+    # (S, A, nS) = env.nextStateProbability.shape
     # A = len(actionListGivenIndex)
     new_state_values = np.zeros((S,))
     state_values = np.zeros((S,))
@@ -146,24 +144,25 @@ def compute_optimal_state_values(env: KnownDynamicsEnv, discountGamma=0.9, use_n
     assert isinstance(env, KnownDynamicsEnv)
 
     S = env.S
-    A = env.A
 
     # (S, A, nS) = env.nextStateProbability.shape
     # A = len(actionListGivenIndex)
     new_state_values = np.zeros((S,))
     state_values = np.zeros((S,))
     iteration = 1
-    a_candidates = np.zeros((A,))
     valid_next_states = env.valid_next_states
     while True:
         for s in range(S):
+
+            possibleAction = env.possible_actions_per_state[s] #Getting the Possible actions per state
+            a_candidates = np.zeros(len(possibleAction)) #Creating a array to compute the possibles actions 
             # print(s)
             # fill with zeros without creating new array
             # a_candidates[:] = 0
             a_candidates.fill(0.0)
             feasible_next_states = valid_next_states[s]
             num_of_feasible_next_states = len(feasible_next_states)
-            for a in range(A):
+            for a in possibleAction:
                 value = 0
                 # for nexts in range(S):
                 for feasible_nexts in range(num_of_feasible_next_states):
@@ -176,8 +175,8 @@ def compute_optimal_state_values(env: KnownDynamicsEnv, discountGamma=0.9, use_n
                 a_candidates[a] = value
             new_state_values[s] = np.max(a_candidates)
         improvement = np.sum(np.abs(new_state_values - state_values))
-        print('improvement =', improvement)
-        if False:  # debug
+        # print('improvement =', improvement)
+        if True:  # debug AK
             print('state values=', state_values)
             print('new state values=', new_state_values)
             print('it=', iteration, 'improvement = ', improvement)
@@ -294,7 +293,7 @@ def compute_optimal_action_values(env: KnownDynamicsEnv,
             stopping_criterion = np.max(
                 abs_difference_array)/np.max(np.abs(new_action_values))
         stopping_criteria_per_iteration.append(stopping_criterion)
-        print('DEBUG: stopping_criterion =', stopping_criterion)
+        # print('DEBUG: stopping_criterion =', stopping_criterion)
         if False:  # debug
             print('state values=', action_values)
             print('new state values=', new_action_values)
@@ -495,7 +494,7 @@ def action_greedy(state: int,
         actions_for_given_state = possible_actions_per_state[state]
         # make sure the action is valid, but keeping invalid actions with value=-infinity
         valid_values_for_given_state = -np.Inf * \
-            np.ones(stateActionValues.shape)
+            np.ones(values_for_given_state.shape)
         valid_values_for_given_state[actions_for_given_state] = values_for_given_state[actions_for_given_state]
         max_value = np.max(valid_values_for_given_state)
         # Use numpy.where to get all indices where the array is equal to its maximum value
@@ -775,7 +774,7 @@ def TODO_estimate_model_probabilities(env: gym.Env):
 
 if __name__ == '__main__':
 
-    # test_dealing_with_sparsity() # helps to debug, comparing methods
+    #test_dealing_with_sparsity()
 
     values = np.array([[3, 5, -4, 2], [10, 10, 0, -20]])
     policy = convert_action_values_into_policy(values)
@@ -789,7 +788,7 @@ if __name__ == '__main__':
     # test_with_sparse_NextStateProbabilitiesEnv()
     # test_with_NextStateProbabilitiesEnv()
 
-    env = SimpleKnownDynamicsEnv()
+    env = RecycleRobotEnv()
     print("About environment:")
     print("Num of states =", env.S)
     print("Num of actions =", env.A)
@@ -809,6 +808,9 @@ if __name__ == '__main__':
     print("Interpret trajectory with print_trajectory() method:")
     print_trajectory(trajectory)
 
+    print("compute_optimal_state_values(env)=", compute_optimal_state_values(env))
+
+    exit(-1)
     total_rewards = run_episode(
         env, uniform_policy, maxNumIterations=8, printInfo=True, printPostProcessingInfo=True)
     print("Total_rewards =", total_rewards)
