@@ -74,6 +74,7 @@ class UserSchedulingEnv(KnownDynamicsEnv):
         # self.ues_pos_prob, self.channel_spectral_efficiencies, self.ues_valid_actions = self.read_external_files()
 
         if True:
+            # the same value for all
             self.channel_spectral_efficiencies = (
                 self.num_incoming_packets_per_time_slot+1)*np.ones((G, G))
         else:
@@ -382,18 +383,21 @@ if __name__ == '__main__':
     print("Running main of simple_user_scheduling_env.py")
     print("Creating the UserSchedulingEnv environment... It takes some time.")
 
+    use_saved_file = False
     file_path = "UserSchedulingEnv.pickle"
-    if os.path.exists(file_path):
+
+    if use_saved_file and os.path.exists(file_path):
         print(f"The file {file_path} exists. I will read it")
         env = pickle.load(open(file_path, "rb"))
     else:
-        print(
-            f"The file {file_path} does not exist. I will create the object and create the file")
+        if use_saved_file:
+            print(
+                f"The file {file_path} does not exist. I will create the object and create the file")
         env = UserSchedulingEnv(
-            G=4, B=2, Nu=2, num_pkts_per_tti=1,
-            can_users_share_position=True,
-            should_add_not_moving=True,
-            print_debug_info=False)  # G is the grid size
+            G=3, B=2, Nu=2, num_pkts_per_tti=1,
+            can_users_share_position=False,
+            should_add_not_moving=False,
+            print_debug_info=True)  # G is the grid size
         pickle.dump(env, open(file_path, "wb"))
 
     # env.prettyPrint()
