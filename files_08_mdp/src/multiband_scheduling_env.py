@@ -362,9 +362,17 @@ def evaluateLearning():
 
 if __name__ == '__main__':
     env = MultibandToyExampleEnv()
-    env.prettyPrint()
-    fmdp.compare_q_learning_with_optimum_policy(
-        env, output_files_prefix="MultibandToyExample")
-    if True:
-        # this may take long time to run
-        fmdp.hyperparameter_grid_search(env)
+    # env.prettyPrint()
+    # fmdp.compare_q_learning_with_optimum_policy(
+    #    env, output_files_prefix="MultibandToyExample")
+    # if True:
+    # this may take long time to run
+    # fmdp.hyperparameter_grid_search(env)
+    action_values, stopping_criteria = fmdp.compute_optimal_action_values(
+        env, tolerance=0)
+    iteration = stopping_criteria.shape[0]
+    stopping_criterion = stopping_criteria[-1]
+    print("action_values with sparsity=", action_values, "converged with",
+          iteration, "iterations with stopping criterion=", stopping_criterion)
+    policy = fmdp.convert_action_values_into_policy(action_values)
+    fmdp.pretty_print_policy(env, policy)
