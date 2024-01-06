@@ -368,11 +368,16 @@ if __name__ == '__main__':
     # if True:
     # this may take long time to run
     # fmdp.hyperparameter_grid_search(env)
+
+    # Get optimum action values
     action_values, stopping_criteria = fmdp.compute_optimal_action_values(
         env, tolerance=0)
-    iteration = stopping_criteria.shape[0]
-    stopping_criterion = stopping_criteria[-1]
-    print("action_values with sparsity=", action_values, "converged with",
-          iteration, "iterations with stopping criterion=", stopping_criterion)
+    iteration = stopping_criteria.shape[0]  # number of iterations
+    stopping_criterion = stopping_criteria[-1]  # final stopping criterion
+    print("All values of stopping criteria along the iterations: ", stopping_criteria)
+
+    # Now convert from values to policy, to show the optimum policy
     policy = fmdp.convert_action_values_into_policy(action_values)
     fmdp.pretty_print_policy(env, policy)
+    print("\nConverged with", iteration,
+          "iterations with final stopping criterion=", stopping_criterion)
