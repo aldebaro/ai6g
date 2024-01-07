@@ -14,8 +14,10 @@ from gymnasium import spaces
 
 from known_dynamics_env import KnownDynamicsEnv
 import finite_mdp_utils as fmdp
-
-
+#####
+import random
+import csv
+#####
 class MultibandToyExampleEnv(KnownDynamicsEnv):
 
     # def __init__(self, discount=1.0):
@@ -35,6 +37,7 @@ class MultibandToyExampleEnv(KnownDynamicsEnv):
 
     def prettyPrint(self):
         '''Print MDP'''
+        print("MDP")
         nextStateProbability = self.nextStateProbability
         rewardsTable = self.rewardsTable
         stateListGivenIndex = self.stateListGivenIndex
@@ -343,6 +346,29 @@ class MultibandToyExampleEnv(KnownDynamicsEnv):
         # reset counters
         self.bitRates = np.zeros((self.M,))
         self.packetDropCounts = np.zeros((self.M,))
+        
+    def prettyPrintToCSV(self, file_name):
+        '''Print MDP and save to CSV'''
+        nextStateProbability = self.nextStateProbability
+        rewardsTable = self.rewardsTable
+        stateListGivenIndex = self.stateListGivenIndex
+        actionListGivenIndex = self.actionListGivenIndex
+        S = len(stateListGivenIndex)
+        A = len(actionListGivenIndex)
+
+        with open(file_name, mode='w', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow(["Current State", "Action", "Next State", "Probability", "Reward"])
+
+            for s in range(S):
+                currentState = stateListGivenIndex[s]
+                for a in range(A):
+                    currentAction = actionListGivenIndex[a]
+                    for nexts in range(S):
+                        prob = nextStateProbability[s, a, nexts]
+                        reward = rewardsTable[s, a, nexts]
+                        nextState = stateListGivenIndex[nexts]
+                        writer.writerow([currentState, currentAction, nextState, prob, reward])
 
 
 def evaluateLearning():
@@ -358,7 +384,45 @@ def evaluateLearning():
                 env, num_runs=20, stepSizeAlpha=a, explorationProbEpsilon=e)
             for i in range(len(rewardsQLearning)):
                 print(rewardsQLearning[i])
-
+#####
+def pretty_print_policy_for_state(env: KnownDynamicsEnv, policy: np.ndarray, s: int):
+    '''
+    Print policy.
+    '''
+    #for s in range(env.S):
+    currentState = env.stateListGivenIndex[s]
+    print('\ns' + str(s) + '=' + str(currentState))
+    first_action = True
+    for a in range(env.A):
+        if policy[s, a] == 0:
+            continue
+        currentAction = env.actionListGivenIndex[a]
+        if first_action:
+            print(' | a' + str(a) + '=' + str(currentAction), end='')
+            first_action = False  # disable this way of printing
+        else:
+            print(' or a' + str(a) + '=' + str(currentAction), end='')
+    print("")
+    
+def pretty_print_policy_to_csv(env: KnownDynamicsEnv, policy: np.ndarray, file_name: str):
+    '''
+    Print policy to a CSV file.
+    '''
+    with open(file_name, 'w', newline='') as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerow(['State', 'Best Actions'])
+        for s in range(env.S):
+            currentState = env.stateListGivenIndex[s]
+            best_actions = []
+            best_action_value = -float('inf')
+            for a in range(env.A):
+                if policy[s, a] > best_action_value:
+                    best_actions = [env.actionListGivenIndex[a]]
+                    best_action_value = policy[s, a]
+                elif policy[s, a] == best_action_value:
+                    best_actions.append(env.actionListGivenIndex[a])
+            writer.writerow([str(currentState), str(best_actions)])
+#####
 
 if __name__ == '__main__':
     env = MultibandToyExampleEnv()
@@ -381,3 +445,6 @@ if __name__ == '__main__':
     fmdp.pretty_print_policy(env, policy)
     print("\nConverged with", iteration,
           "iterations with final stopping criterion=", stopping_criterion)
+    
+    env.prettyPrintToCSV('FDMP.csv')
+    pretty_print_policy_to_csv(env, policy, 'policy.csv')
