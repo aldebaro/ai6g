@@ -54,7 +54,7 @@ You have some options to execute the notebooks:
 #### 2) At Colab Google computers
 - The Colab versions of the notebooks 02, 03, 04, 06, and 10 need to access data sets that are not on the repository, therefore it is necessary to follow these two steps:
 
-1) Logged in your Google Account, enter in the link of the public folder storing the data set, named "ai6g_files" https://drive.google.com/drive/folders/1HcXb_fN590f7fesLQ1LLRoQCSuzCFZ9r 
+1) Logged in your Google Account, enter in the link of the public folder storing the data set, named "ai6g_files" https://drive.google.com/drive/folders/1ufi2246xz5xsTHZCzjzFsESZy2dHlL16?usp=sharing
 
 2) After that, on you "Shared with me" (Compartilhados comigo) tab, go to the "ai6g_files" folder, use the right-click button, and press the button "Add shortcut to Google Drive" (Adicionar atalho ao Google Drive)
 
